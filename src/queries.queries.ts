@@ -60,10 +60,10 @@ export interface IGetChannelImagesParams {
 
 /** 'GetChannelImages' return type */
 export interface IGetChannelImagesResult {
-  channel: string | null;
-  image_url: string | null;
+  channel_id: string;
+  image_url: string;
   message_id: string;
-  prompt: string | null;
+  prompt: string;
 }
 
 /** 'GetChannelImages' query type */
@@ -72,43 +72,43 @@ export interface IGetChannelImagesQuery {
   result: IGetChannelImagesResult;
 }
 
-const getChannelImagesIR: any = {"usedParamSet":{"channelName":true},"params":[{"name":"channelName","required":false,"transform":{"type":"scalar"},"locs":[{"a":37,"b":48}]}],"statement":"SELECT * FROM images WHERE channel = :channelName"};
+const getChannelImagesIR: any = {"usedParamSet":{"channelName":true},"params":[{"name":"channelName","required":false,"transform":{"type":"scalar"},"locs":[{"a":113,"b":124}]}],"statement":"SELECT images.* FROM images INNER JOIN channels ON images.channel_id = channels.channel_id WHERE channels.name = :channelName"};
 
 /**
  * Query generated from SQL:
  * ```
- * SELECT * FROM images WHERE channel = :channelName
+ * SELECT images.* FROM images INNER JOIN channels ON images.channel_id = channels.channel_id WHERE channels.name = :channelName
  * ```
  */
 export const getChannelImages = new PreparedQuery<IGetChannelImagesParams,IGetChannelImagesResult>(getChannelImagesIR);
 
 
-/** 'InsertImage' parameters type */
-export interface IInsertImageParams {
-  channel?: string | null | void;
+/** 'UpsertImage' parameters type */
+export interface IUpsertImageParams {
+  channelId?: string | null | void;
   imageUrl?: string | null | void;
   messageId?: string | null | void;
   prompt?: string | null | void;
 }
 
-/** 'InsertImage' return type */
-export type IInsertImageResult = void;
+/** 'UpsertImage' return type */
+export type IUpsertImageResult = void;
 
-/** 'InsertImage' query type */
-export interface IInsertImageQuery {
-  params: IInsertImageParams;
-  result: IInsertImageResult;
+/** 'UpsertImage' query type */
+export interface IUpsertImageQuery {
+  params: IUpsertImageParams;
+  result: IUpsertImageResult;
 }
 
-const insertImageIR: any = {"usedParamSet":{"prompt":true,"channel":true,"messageId":true,"imageUrl":true},"params":[{"name":"prompt","required":false,"transform":{"type":"scalar"},"locs":[{"a":68,"b":74}]},{"name":"channel","required":false,"transform":{"type":"scalar"},"locs":[{"a":77,"b":84}]},{"name":"messageId","required":false,"transform":{"type":"scalar"},"locs":[{"a":87,"b":96}]},{"name":"imageUrl","required":false,"transform":{"type":"scalar"},"locs":[{"a":99,"b":107}]}],"statement":"INSERT INTO images (prompt, channel, message_id, image_url) VALUES (:prompt, :channel, :messageId, :imageUrl)"};
+const upsertImageIR: any = {"usedParamSet":{"prompt":true,"channelId":true,"messageId":true,"imageUrl":true},"params":[{"name":"prompt","required":false,"transform":{"type":"scalar"},"locs":[{"a":71,"b":77},{"a":163,"b":169}]},{"name":"channelId","required":false,"transform":{"type":"scalar"},"locs":[{"a":80,"b":89}]},{"name":"messageId","required":false,"transform":{"type":"scalar"},"locs":[{"a":92,"b":101}]},{"name":"imageUrl","required":false,"transform":{"type":"scalar"},"locs":[{"a":104,"b":112},{"a":184,"b":192}]}],"statement":"INSERT INTO images (prompt, channel_id, message_id, image_url) VALUES (:prompt, :channelId, :messageId, :imageUrl) ON CONFLICT (message_id) DO UPDATE SET prompt = :prompt, image_url = :imageUrl"};
 
 /**
  * Query generated from SQL:
  * ```
- * INSERT INTO images (prompt, channel, message_id, image_url) VALUES (:prompt, :channel, :messageId, :imageUrl)
+ * INSERT INTO images (prompt, channel_id, message_id, image_url) VALUES (:prompt, :channelId, :messageId, :imageUrl) ON CONFLICT (message_id) DO UPDATE SET prompt = :prompt, image_url = :imageUrl
  * ```
  */
-export const insertImage = new PreparedQuery<IInsertImageParams,IInsertImageResult>(insertImageIR);
+export const upsertImage = new PreparedQuery<IUpsertImageParams,IUpsertImageResult>(upsertImageIR);
 
 
 /** 'UpsertChannel' parameters type */

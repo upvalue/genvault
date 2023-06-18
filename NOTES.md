@@ -27,4 +27,5 @@ OK in order:
 - Handle ingestion (from channels)
 - Handle image upscales (ingestion)
 - Make it look nice
--
+- Handle upscaling from the app
+- Make prompt generator

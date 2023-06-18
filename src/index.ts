@@ -5,13 +5,20 @@ import { InteractionResponseType, InteractionType } from "discord-interactions";
 import idGenerator from "stripe-id-generator";
 import { VerifyDiscordRequest } from "./discord";
 
-import { Client as DiscordClient, GatewayDispatchEvents, GatewayIntentBits } from "@discordjs/core";
+import {
+  APIChannel,
+  APIMessage,
+  Client as DiscordClient,
+  GatewayDispatchEvents,
+  GatewayIntentBits,
+  WithIntrinsicProps,
+} from "@discordjs/core";
 import { WebSocketManager } from "@discordjs/ws";
 
 import { REST } from "@discordjs/rest";
 import { Client as PGClient } from "pg";
 import config from "../config.json";
-import { getChannelImages, getChannels, insertImage, upsertChannel } from "./queries.queries";
+import { getChannelImages, getChannels, upsertChannel, upsertImage } from "./queries.queries";
 
 const uuidGen = new idGenerator();
 
@@ -97,86 +104,106 @@ const client = new DiscordClient({
   gateway,
 });
 
-client.on(GatewayDispatchEvents.Ready, (msg) => {
-  msg.data.guilds.forEach(g => {
-    client.api.guilds.getChannels(g.id).then(async channels => {
-      const workbookCategory = channels.find(c => c.name === "mj-workbook");
-      if (!workbookCategory) {
-        console.error("Could not find #mj-workbook category");
-        return;
-      }
+client.on(GatewayDispatchEvents.Ready, async (msg) => {
+  if (msg.data.guilds.length !== 1) {
+    console.error("Expected to be in exactly one guild, got", msg.data.guilds.length);
+    process.exit(1);
+  }
 
-      // @ts-expect-error
-      const workbookChannels = channels.filter(c => c.parent_id === workbookCategory.id);
+  let workbookChannels: APIChannel[] = [];
 
-      console.log(
-        `Found ${workbookChannels.length} workbook channels: ${workbookChannels.map(c => `#${c.name}`).join(", ")}`,
-      );
+  await client.api.guilds.getChannels(msg.data.guilds[0].id).then(async channels => {
+    const workbookCategory = channels.find(c => c.name === "mj-workbook");
+    if (!workbookCategory) {
+      console.error("Could not find #mj-workbook category");
+      return;
+    }
 
-      await withDBClient(async (dbClient) => {
-        await dbClient.query("BEGIN");
-        await Promise.all(workbookChannels.map(async (c) => {
-          return upsertChannel.run({
-            name: c.name,
-            channel_id: c.id,
-          }, dbClient);
-        }));
+    // @ts-expect-error
+    workbookChannels = channels.filter(c => c.parent_id === workbookCategory.id);
 
-        await dbClient.query("COMMIT");
-      });
+    console.log(
+      `Found ${workbookChannels.length} workbook channels: ${workbookChannels.map(c => `#${c.name}`).join(", ")}`,
+    );
 
-      console.log(workbookChannels.map(c => c.name));
+    await withDBClient(async (dbClient) => {
+      await dbClient.query("BEGIN");
+      await Promise.all(workbookChannels.map(async (c) => {
+        return upsertChannel.run({
+          name: c.name,
+          channel_id: c.id,
+        }, dbClient);
+      }));
+
+      await dbClient.query("COMMIT");
     });
+
+    console.log(workbookChannels.map(c => c.name));
   });
+
+  console.log(workbookChannels.map(c => c.name));
+
+  for (const c of workbookChannels) {
+    await client.api.channels.getMessages(c.id, { limit: 100 }).then(async (messages) => {
+      for (const m of messages) {
+        handleImageGenMessage(m);
+      }
+    });
+  }
 });
 
 const promptRegex = /\*\*(.*?)\*\*/g;
-client.on(GatewayDispatchEvents.MessageCreate, (message) => {
-  const { data } = message;
-  const { author } = data;
 
+const handleImageGenMessage = async (message: APIMessage) => {
+  const { author, content, attachments, components } = message;
   // Check for MidJourney bot
   if (!author) return;
   if (author.username !== "Midjourney Bot") return;
 
   // Ignore waiting to start messages
-  if (data.content.includes("Waiting to start")) return;
+  if (content.includes("Waiting to start")) return;
+
+  if (content.includes("Image #")) {
+    console.log("Image upscale message, ignoring");
+  }
 
   withDBClient(async (dbClient) => {
-    const promptMatch = promptRegex.exec(data.content);
+    console.log(content);
+    const promptMatch = content.matchAll(promptRegex);
 
     if (!promptMatch) {
-      console.error(`Could not extract prompt from ${data.content}`);
+      console.error(`Could not extract prompt from "${content}"`);
       return;
     }
 
-    const prompt = promptMatch[1];
+    const prompt = promptMatch.next().value[1];
 
-    if (data.attachments.length !== 1) {
-      console.error(`Expected 1 attachment, got ${data.attachments.length}`);
+    if (attachments.length !== 1) {
+      console.error(`Expected 1 attachment, got ${attachments.length}`);
       return;
     }
 
-    const [attachment] = data.attachments;
+    const [attachment] = attachments;
 
-    // now extract attachments into array
-    await insertImage.run({
-      messageId: data.id,
-      channel: data.channel_id,
+    const image = {
+      messageId: message.id,
+      channelId: message.channel_id,
       imageUrl: attachment.url,
       prompt,
-    }, dbClient);
+    };
+
+    console.log(image);
+
+    // now extract attachments into array
+    await upsertImage.run(image, dbClient);
   });
+};
 
-  console.log(message);
+client.on(GatewayDispatchEvents.MessageCreate, (event) => {
+  const { data } = event;
+  const { author } = data;
 
-  // Attachments
-  // Components
-  /*data.components?.forEach(c => {
-    console.log("component", c);
-  });*/
-
-  console.log(data.components);
+  handleImageGenMessage(event.data);
 });
 
 gateway.connect();
