@@ -1,0 +1,5 @@
+<% collections.forEach((c) => { %>
+    <a role="button" class="secondary outline" href="/collections/<%= c.collection_id %>">
+        <%= c.name %>
+    </a>
+<% }); %>

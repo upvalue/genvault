@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>mj-workbook</title>
+    <link rel="stylesheet" href="/public/pico.min.css">
+    <script src="/public/htmx.min.js"></script>
+  </head>
+  <body>
+    <main class="container">
+      <h1>MJ Workbook</h1>
+      <div hx-get="/snippets/collections" hx-trigger="load, every 2s">
+        spinner
+      </div>
+      <span role="button" class="outline secondary"
+        data-target="modal-example"
+        onClick="toggleModal(event)">
+        add new collection
+    </span>
+
+      <!-- Modal -->
+      <dialog id="modal-example">
+        <article>
+          <a href="#close"
+            aria-label="Close"
+            class="close"
+            data-target="modal-example"
+            onClick="toggleModal(event)">
+          </a>
+          <h3>Confirm your action!</h3>
+          <p>
+            Cras sit amet maximus risus. 
+            Pellentesque sodales odio sit amet augue finibus pellentesque. 
+            Nullam finibus risus non semper euismod.
+          </p>
+          <footer>
+            <a href="#cancel"
+              role="button"
+              class="secondary"
+              data-target="modal-example"
+              onClick="toggleModal(event)">
+              Cancel
+            </a>
+            <a href="#confirm"
+              role="button"
+              data-target="modal-example"
+              onClick="toggleModal(event)">
+              Confirm
+            </a>
+          </footer>
+        </article>
+      </dialog>
