@@ -1,25 +1,23 @@
-DROP TABLE IF EXISTS collections CASCADE;
+DROP TABLE IF EXISTS channels CASCADE;
 DROP TABLE IF EXISTS images CASCADE;
-DROP TABLE IF EXISTS app CASCADE;
 
-CREATE TABLE IF NOT EXISTS collections (
-    collection_id text,
+CREATE TABLE IF NOT EXISTS channels (
     name text,
-    PRIMARY key(collection_id)
+    channel_id text,
+    PRIMARY key(name)
 );
 
 CREATE TABLE IF NOT EXISTS images (
     prompt text,
     image_url text,
-    image_id text,
-    collection_id text references collections(collection_id),
-    PRIMARY KEY (image_id)
+    message_id text,
+    channel_id text references channels(channel_id),
+    PRIMARY KEY (message_id)
 );
 
-CREATE TABLE IF NOT EXISTS app (
-    app_id text PRIMARY KEY,
-    active_collection text references collections(collection_id)
+/*
+CREATE TABLE IF NOT EXISTS image_upscales (
+    image_message_id text references images(message_id),
+    upscale_message_id text PRIMARY KEY
 );
-
-INSERT INTO collections(collection_id, name) VALUES ('collection_0CI8vyo0jVupAj7b', 'Scratch') ON CONFLICT DO NOTHING;
-INSERT INTO app(app_id, active_collection) VALUES ('mj-workbook', 'collection_0CI8vyo0jVupAj7b') ON CONFLICT DO NOTHING;
+*/

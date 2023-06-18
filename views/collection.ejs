@@ -1,5 +1,0 @@
-<%- include('header') -%>
-<h2><%= collection.name %></h2>
-<div hx-get="/collections/<%= collection.collection_id %>/images" hx-trigger="load, every 2s">
-</div>
-<%- include('footer') -%>

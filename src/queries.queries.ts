@@ -1,121 +1,93 @@
 /** Types generated for queries found in "src/queries.sql" */
 import { PreparedQuery } from '@pgtyped/runtime';
 
-/** 'GetCollections' parameters type */
-export type IGetCollectionsParams = void;
+/** 'GetChannels' parameters type */
+export type IGetChannelsParams = void;
 
-/** 'GetCollections' return type */
-export interface IGetCollectionsResult {
-  collection_id: string;
-  name: string | null;
+/** 'GetChannels' return type */
+export interface IGetChannelsResult {
+  name: string;
 }
 
-/** 'GetCollections' query type */
-export interface IGetCollectionsQuery {
-  params: IGetCollectionsParams;
-  result: IGetCollectionsResult;
+/** 'GetChannels' query type */
+export interface IGetChannelsQuery {
+  params: IGetChannelsParams;
+  result: IGetChannelsResult;
 }
 
-const getCollectionsIR: any = {"usedParamSet":{},"params":[],"statement":"SELECT collection_id, name FROM collections"};
+const getChannelsIR: any = {"usedParamSet":{},"params":[],"statement":"SELECT name FROM channels"};
 
 /**
  * Query generated from SQL:
  * ```
- * SELECT collection_id, name FROM collections
+ * SELECT name FROM channels
  * ```
  */
-export const getCollections = new PreparedQuery<IGetCollectionsParams,IGetCollectionsResult>(getCollectionsIR);
+export const getChannels = new PreparedQuery<IGetChannelsParams,IGetChannelsResult>(getChannelsIR);
 
 
-/** 'GetCollection' parameters type */
-export interface IGetCollectionParams {
-  collectionId?: string | null | void;
+/** 'GetChannel' parameters type */
+export interface IGetChannelParams {
+  name?: string | null | void;
 }
 
-/** 'GetCollection' return type */
-export interface IGetCollectionResult {
-  collection_id: string;
-  name: string | null;
+/** 'GetChannel' return type */
+export interface IGetChannelResult {
+  name: string;
 }
 
-/** 'GetCollection' query type */
-export interface IGetCollectionQuery {
-  params: IGetCollectionParams;
-  result: IGetCollectionResult;
+/** 'GetChannel' query type */
+export interface IGetChannelQuery {
+  params: IGetChannelParams;
+  result: IGetChannelResult;
 }
 
-const getCollectionIR: any = {"usedParamSet":{"collectionId":true},"params":[{"name":"collectionId","required":false,"transform":{"type":"scalar"},"locs":[{"a":66,"b":78}]}],"statement":"SELECT collection_id, name FROM collections WHERE collection_id = :collectionId"};
+const getChannelIR: any = {"usedParamSet":{"name":true},"params":[{"name":"name","required":false,"transform":{"type":"scalar"},"locs":[{"a":39,"b":43}]}],"statement":"SELECT name FROM channels WHERE name = :name"};
 
 /**
  * Query generated from SQL:
  * ```
- * SELECT collection_id, name FROM collections WHERE collection_id = :collectionId
+ * SELECT name FROM channels WHERE name = :name
  * ```
  */
-export const getCollection = new PreparedQuery<IGetCollectionParams,IGetCollectionResult>(getCollectionIR);
+export const getChannel = new PreparedQuery<IGetChannelParams,IGetChannelResult>(getChannelIR);
 
 
-/** 'GetCollectionImages' parameters type */
-export interface IGetCollectionImagesParams {
-  collectionId?: string | null | void;
+/** 'GetChannelImages' parameters type */
+export interface IGetChannelImagesParams {
+  channelName?: string | null | void;
 }
 
-/** 'GetCollectionImages' return type */
-export interface IGetCollectionImagesResult {
-  collection_id: string | null;
-  image_id: string;
+/** 'GetChannelImages' return type */
+export interface IGetChannelImagesResult {
+  channel: string | null;
   image_url: string | null;
+  message_id: string;
   prompt: string | null;
 }
 
-/** 'GetCollectionImages' query type */
-export interface IGetCollectionImagesQuery {
-  params: IGetCollectionImagesParams;
-  result: IGetCollectionImagesResult;
+/** 'GetChannelImages' query type */
+export interface IGetChannelImagesQuery {
+  params: IGetChannelImagesParams;
+  result: IGetChannelImagesResult;
 }
 
-const getCollectionImagesIR: any = {"usedParamSet":{"collectionId":true},"params":[{"name":"collectionId","required":false,"transform":{"type":"scalar"},"locs":[{"a":43,"b":55}]}],"statement":"SELECT * FROM images WHERE collection_id = :collectionId"};
+const getChannelImagesIR: any = {"usedParamSet":{"channelName":true},"params":[{"name":"channelName","required":false,"transform":{"type":"scalar"},"locs":[{"a":37,"b":48}]}],"statement":"SELECT * FROM images WHERE channel = :channelName"};
 
 /**
  * Query generated from SQL:
  * ```
- * SELECT * FROM images WHERE collection_id = :collectionId
+ * SELECT * FROM images WHERE channel = :channelName
  * ```
  */
-export const getCollectionImages = new PreparedQuery<IGetCollectionImagesParams,IGetCollectionImagesResult>(getCollectionImagesIR);
-
-
-/** 'GetActiveCollection' parameters type */
-export type IGetActiveCollectionParams = void;
-
-/** 'GetActiveCollection' return type */
-export interface IGetActiveCollectionResult {
-  collection_id: string;
-  name: string | null;
-}
-
-/** 'GetActiveCollection' query type */
-export interface IGetActiveCollectionQuery {
-  params: IGetActiveCollectionParams;
-  result: IGetActiveCollectionResult;
-}
-
-const getActiveCollectionIR: any = {"usedParamSet":{},"params":[],"statement":"SELECT collection_id, name FROM collections INNER JOIN app ON collections.collection_id = app.active_collection"};
-
-/**
- * Query generated from SQL:
- * ```
- * SELECT collection_id, name FROM collections INNER JOIN app ON collections.collection_id = app.active_collection
- * ```
- */
-export const getActiveCollection = new PreparedQuery<IGetActiveCollectionParams,IGetActiveCollectionResult>(getActiveCollectionIR);
+export const getChannelImages = new PreparedQuery<IGetChannelImagesParams,IGetChannelImagesResult>(getChannelImagesIR);
 
 
 /** 'InsertImage' parameters type */
 export interface IInsertImageParams {
-  collectionId?: string | null | void;
-  imageId?: string | null | void;
+  channel?: string | null | void;
   imageUrl?: string | null | void;
+  messageId?: string | null | void;
   prompt?: string | null | void;
 }
 
@@ -128,14 +100,40 @@ export interface IInsertImageQuery {
   result: IInsertImageResult;
 }
 
-const insertImageIR: any = {"usedParamSet":{"prompt":true,"collectionId":true,"imageId":true,"imageUrl":true},"params":[{"name":"prompt","required":false,"transform":{"type":"scalar"},"locs":[{"a":72,"b":78}]},{"name":"collectionId","required":false,"transform":{"type":"scalar"},"locs":[{"a":81,"b":93}]},{"name":"imageId","required":false,"transform":{"type":"scalar"},"locs":[{"a":96,"b":103}]},{"name":"imageUrl","required":false,"transform":{"type":"scalar"},"locs":[{"a":106,"b":114}]}],"statement":"INSERT INTO images (prompt, collection_id, image_id, image_url) VALUES (:prompt, :collectionId, :imageId, :imageUrl)"};
+const insertImageIR: any = {"usedParamSet":{"prompt":true,"channel":true,"messageId":true,"imageUrl":true},"params":[{"name":"prompt","required":false,"transform":{"type":"scalar"},"locs":[{"a":68,"b":74}]},{"name":"channel","required":false,"transform":{"type":"scalar"},"locs":[{"a":77,"b":84}]},{"name":"messageId","required":false,"transform":{"type":"scalar"},"locs":[{"a":87,"b":96}]},{"name":"imageUrl","required":false,"transform":{"type":"scalar"},"locs":[{"a":99,"b":107}]}],"statement":"INSERT INTO images (prompt, channel, message_id, image_url) VALUES (:prompt, :channel, :messageId, :imageUrl)"};
 
 /**
  * Query generated from SQL:
  * ```
- * INSERT INTO images (prompt, collection_id, image_id, image_url) VALUES (:prompt, :collectionId, :imageId, :imageUrl)
+ * INSERT INTO images (prompt, channel, message_id, image_url) VALUES (:prompt, :channel, :messageId, :imageUrl)
  * ```
  */
 export const insertImage = new PreparedQuery<IInsertImageParams,IInsertImageResult>(insertImageIR);
+
+
+/** 'UpsertChannel' parameters type */
+export interface IUpsertChannelParams {
+  channel_id?: string | null | void;
+  name?: string | null | void;
+}
+
+/** 'UpsertChannel' return type */
+export type IUpsertChannelResult = void;
+
+/** 'UpsertChannel' query type */
+export interface IUpsertChannelQuery {
+  params: IUpsertChannelParams;
+  result: IUpsertChannelResult;
+}
+
+const upsertChannelIR: any = {"usedParamSet":{"name":true,"channel_id":true},"params":[{"name":"name","required":false,"transform":{"type":"scalar"},"locs":[{"a":48,"b":52}]},{"name":"channel_id","required":false,"transform":{"type":"scalar"},"locs":[{"a":55,"b":65},{"a":114,"b":124}]}],"statement":"INSERT INTO channels (name, channel_id) VALUES (:name, :channel_id) ON CONFLICT (name) DO UPDATE SET channel_id = :channel_id"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * INSERT INTO channels (name, channel_id) VALUES (:name, :channel_id) ON CONFLICT (name) DO UPDATE SET channel_id = :channel_id
+ * ```
+ */
+export const upsertChannel = new PreparedQuery<IUpsertChannelParams,IUpsertChannelResult>(upsertChannelIR);
 
 

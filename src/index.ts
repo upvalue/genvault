@@ -11,13 +11,7 @@ import { WebSocketManager } from "@discordjs/ws";
 import { REST } from "@discordjs/rest";
 import { Client as PGClient } from "pg";
 import config from "../config.json";
-import {
-  getActiveCollection,
-  getCollection,
-  getCollectionImages,
-  getCollections,
-  insertImage,
-} from "./queries.queries";
+import { getChannelImages, getChannels, insertImage, upsertChannel } from "./queries.queries";
 
 const uuidGen = new idGenerator();
 
@@ -49,26 +43,23 @@ app.get("/", (req, res) => {
   res.render("index.ejs", {});
 });
 
-app.get("/snippets/collections", async (req, res) => {
+app.get("/snippets/channels", async (req, res) => {
   await withDBClient(async (dbClient) => {
-    const collections = await getCollections.run(undefined, dbClient);
+    const channels = await getChannels.run(undefined, dbClient);
 
-    res.render("snippets/collections", { collections });
+    res.render("snippets/channels", { channels });
   });
 });
 
-app.get("/collections/:collectionId/images", async (req, res) => {
+app.get("/channels/:channelName/images", async (req, res) => {
   await withDBClient(async (dbClient) => {
-    const images = await getCollectionImages.run({ collectionId: req.params.collectionId }, dbClient);
+    const images = await getChannelImages.run({ channelName: req.params.channelName }, dbClient);
     res.render("snippets/images", { images });
   });
 });
 
-app.get("/collections/:collectionId", async (req, res) => {
-  await withDBClient(async (dbClient) => {
-    const collections = await getCollection.run({ collectionId: req.params.collectionId }, dbClient);
-    res.render("collection", { collection: collections[0] });
-  });
+app.get("/channels/:channelName", async (req, res) => {
+  res.render("channel", { channelName: req.params.channelName });
 });
 
 app.post("/interactions", async (req, res) => {
@@ -106,6 +97,39 @@ const client = new DiscordClient({
   gateway,
 });
 
+client.on(GatewayDispatchEvents.Ready, (msg) => {
+  msg.data.guilds.forEach(g => {
+    client.api.guilds.getChannels(g.id).then(async channels => {
+      const workbookCategory = channels.find(c => c.name === "mj-workbook");
+      if (!workbookCategory) {
+        console.error("Could not find #mj-workbook category");
+        return;
+      }
+
+      // @ts-expect-error
+      const workbookChannels = channels.filter(c => c.parent_id === workbookCategory.id);
+
+      console.log(
+        `Found ${workbookChannels.length} workbook channels: ${workbookChannels.map(c => `#${c.name}`).join(", ")}`,
+      );
+
+      await withDBClient(async (dbClient) => {
+        await dbClient.query("BEGIN");
+        await Promise.all(workbookChannels.map(async (c) => {
+          return upsertChannel.run({
+            name: c.name,
+            channel_id: c.id,
+          }, dbClient);
+        }));
+
+        await dbClient.query("COMMIT");
+      });
+
+      console.log(workbookChannels.map(c => c.name));
+    });
+  });
+});
+
 const promptRegex = /\*\*(.*?)\*\*/g;
 client.on(GatewayDispatchEvents.MessageCreate, (message) => {
   const { data } = message;
@@ -128,10 +152,6 @@ client.on(GatewayDispatchEvents.MessageCreate, (message) => {
 
     const prompt = promptMatch[1];
 
-    const imageId = uuidGen.new("image");
-
-    const activeCollectionId = (await getActiveCollection.run(undefined as never, dbClient))[0].collection_id;
-
     if (data.attachments.length !== 1) {
       console.error(`Expected 1 attachment, got ${data.attachments.length}`);
       return;
@@ -141,8 +161,8 @@ client.on(GatewayDispatchEvents.MessageCreate, (message) => {
 
     // now extract attachments into array
     await insertImage.run({
-      imageId,
-      collectionId: activeCollectionId,
+      messageId: data.id,
+      channel: data.channel_id,
       imageUrl: attachment.url,
       prompt,
     }, dbClient);
