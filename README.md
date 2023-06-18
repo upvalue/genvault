@@ -2,9 +2,10 @@
 
 App for working with a specific tool that happens to have Discord as an interface.
 
-- Setup a postgres DB
+- Setup a postgres DB, use schema.sql (no migrations currently)
 - Create a discord bot with permissions to read messages and message history, set that up in a server, configure this with the credentials
 - Invite midjourney bot to the server
+- Add a category called "mj-workbook" and channels within that category
 - Midjourney images will show up in the app
 
 Todo:
