@@ -83,6 +83,35 @@ const getChannelImagesIR: any = {"usedParamSet":{"channelName":true},"params":[{
 export const getChannelImages = new PreparedQuery<IGetChannelImagesParams,IGetChannelImagesResult>(getChannelImagesIR);
 
 
+/** 'GetImageUpscales' parameters type */
+export interface IGetImageUpscalesParams {
+  messageIds: readonly (string | null | void)[];
+}
+
+/** 'GetImageUpscales' return type */
+export interface IGetImageUpscalesResult {
+  image_message_id: string;
+  image_url: string;
+  upscale_message_id: string;
+}
+
+/** 'GetImageUpscales' query type */
+export interface IGetImageUpscalesQuery {
+  params: IGetImageUpscalesParams;
+  result: IGetImageUpscalesResult;
+}
+
+const getImageUpscalesIR: any = {"usedParamSet":{"messageIds":true},"params":[{"name":"messageIds","required":false,"transform":{"type":"array_spread"},"locs":[{"a":148,"b":158}]}],"statement":"SELECT images_upscaled.* FROM images_upscaled INNER JOIN images ON images_upscaled.image_message_id = images.message_id WHERE images.message_id  in :messageIds"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * SELECT images_upscaled.* FROM images_upscaled INNER JOIN images ON images_upscaled.image_message_id = images.message_id WHERE images.message_id  in :messageIds
+ * ```
+ */
+export const getImageUpscales = new PreparedQuery<IGetImageUpscalesParams,IGetImageUpscalesResult>(getImageUpscalesIR);
+
+
 /** 'UpsertImage' parameters type */
 export interface IUpsertImageParams {
   channelId?: string | null | void;
@@ -135,5 +164,32 @@ const upsertChannelIR: any = {"usedParamSet":{"name":true,"channel_id":true},"pa
  * ```
  */
 export const upsertChannel = new PreparedQuery<IUpsertChannelParams,IUpsertChannelResult>(upsertChannelIR);
+
+
+/** 'UpsertUpscaledImage' parameters type */
+export interface IUpsertUpscaledImageParams {
+  imageMessageId?: string | null | void;
+  imageUrl?: string | null | void;
+  upscaleMessageId?: string | null | void;
+}
+
+/** 'UpsertUpscaledImage' return type */
+export type IUpsertUpscaledImageResult = void;
+
+/** 'UpsertUpscaledImage' query type */
+export interface IUpsertUpscaledImageQuery {
+  params: IUpsertUpscaledImageParams;
+  result: IUpsertUpscaledImageResult;
+}
+
+const upsertUpscaledImageIR: any = {"usedParamSet":{"upscaleMessageId":true,"imageMessageId":true,"imageUrl":true},"params":[{"name":"upscaleMessageId","required":false,"transform":{"type":"scalar"},"locs":[{"a":86,"b":102}]},{"name":"imageMessageId","required":false,"transform":{"type":"scalar"},"locs":[{"a":105,"b":119},{"a":199,"b":213}]},{"name":"imageUrl","required":false,"transform":{"type":"scalar"},"locs":[{"a":122,"b":130},{"a":228,"b":236}]}],"statement":"INSERT INTO images_upscaled (upscale_message_id, image_message_id, image_url) VALUES (:upscaleMessageId, :imageMessageId, :imageUrl) ON CONFLICT (upscale_message_id) DO UPDATE SET image_message_id = :imageMessageId, image_url = :imageUrl"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * INSERT INTO images_upscaled (upscale_message_id, image_message_id, image_url) VALUES (:upscaleMessageId, :imageMessageId, :imageUrl) ON CONFLICT (upscale_message_id) DO UPDATE SET image_message_id = :imageMessageId, image_url = :imageUrl
+ * ```
+ */
+export const upsertUpscaledImage = new PreparedQuery<IUpsertUpscaledImageParams,IUpsertUpscaledImageResult>(upsertUpscaledImageIR);
 
 

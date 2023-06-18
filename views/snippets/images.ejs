@@ -1,4 +1,7 @@
 <% images.forEach((i) => { %>
     <%= i.prompt %>
     <img src="<%= i.image_url %>" title="<%= i.prompt %>" />
+    <% i.upscales.forEach((u) => { %>
+        <img src="<%= u.image_url %>" title="<%= u.prompt %>" />
+    <% }); %>
 <% }); %>
