@@ -1,6 +1,6 @@
 <%- include('header') -%>
-<h2><%= channelName %></h2>
-<div hx-get="/channels/<%= channelName %>/images" hx-trigger="load, every 2s">
+<h2>#<%= channelName %></h2>
+<div hx-get="/channels/<%= channelName %>/images" hx-trigger="load, every 10s">
     loading images
 </div>
 <%- include('footer') -%>

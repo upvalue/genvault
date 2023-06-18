@@ -6,11 +6,21 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>mj-workbook</title>
     <link rel="stylesheet" href="/public/pico.min.css">
+    <link rel="stylesheet" href="/public/style.css">
+    
+  <link rel="stylesheet" href="https://unpkg.com/tachyons/css/tachyons.min.css">
     <script src="/public/htmx.min.js"></script>
   </head>
   <body>
     <main class="container">
-      <div hx-get="/snippets/channels" hx-trigger="load, every 2s"></div>
-        spinner
+      <div hx-get="/snippets/channels" hx-trigger="load, every 10s" hx-swap="innerHTML swap:1s" hx-target="#loader">
+        <div id="loader" class="flex items-center fade-me-in fade-me-out">
+          <div class="lds-ripple"><div></div><div></div></div> 
+          <span>
+            &nbsp;Loading channels
+          </span>
+        </div>
+
       </div>
-    </span>
+      </div>
+
