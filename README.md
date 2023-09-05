@@ -1,31 +1,26 @@
-# mj-workbook
+# genvault
 
-App for working with a specific tool that happens to have Discord as an interface.
+genvault is a tool for working with text & image generative AIs.
 
-- Setup a postgres DB, use schema.sql (no migrations currently)
-- Create a discord bot with permissions to read messages and message history, set that up in a server, configure this with the credentials
-- Invite midjourney bot to the server
-- Add a category called "mj-workbook" and channels within that category
-- Midjourney images will show up in the app
+It is a minimalistic interface for some text & image models. It's intended to
+augment an [Obsidian](https://obsidian.md) vault, though it's not inherently
+tied to Obsidian and can be used without it.
+
+Currently supports:
+
+- Generating images with Stable Diffusion via [Replicate](https://replicate.com)
 
 Todo:
 
-- Prompting & upscaling from within the app
-- Search through channels or through all images
+- Midjourney
+- ChatGPT via OpenAI API
+- Llama2 via some API
 
-## Instructions
+All of these are saved to Markdown files with properties so they can be easily
+searched from Obsidian, linked to from other Obsidian notes & canvases and so
+on.
 
-Create a `config.json` file with the following contents:
+# Setup
 
-```
-{
-  "discordPublicKey": "PUBLIC KEY",
-  "discordBotToken": "BOT TOKEN"
-  "database": {
-    "host": "postgres",
-    "user": "postgres",
-    "password": "postgres",
-    "port": 5432
-  }
-}
-```
+TBD
+

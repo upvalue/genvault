@@ -1,9 +1,0 @@
-<% images.forEach((i) => { %>
-    <section>
-    <%= i.prompt %>
-    <img src="<%= i.image_url %>" title="<%= i.prompt %>" />
-    <% i.upscales.forEach((u) => { %>
-        <img src="<%= u.image_url %>" title="<%= u.prompt %>" style="margin-left:100px;" />
-    <% }); %>
-    </section>
-<% }); %>

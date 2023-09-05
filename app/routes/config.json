@@ -1,0 +1,9 @@
+{
+    "imageModels": [
+        {
+            "backend": "replicate",
+            "endpoint": "stability-ai/sdxl:d830ba5dabf8090ec0db6c10fc862c6eb1c929e1a194a5411852d25fd954ac82",
+            "description": "Stable Diffusion SDXL"
+        }
+    ]
+}
