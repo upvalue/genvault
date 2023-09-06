@@ -1,12 +1,6 @@
 # tmuxp.yaml - development tmuxp config
 session_name: generative-workbook-dev
 windows:
-  - window_name: database
-    panes:
-      - docker-compose -f docker-compose.db.yml up
-  - window_name: pgtyped
-    panes:
-      - pnpm pgtyped:watch
   - window_name: remix
     panes:
       - AUX_URL=http://localhost:3001 pnpm remix dev

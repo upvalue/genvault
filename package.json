@@ -13,7 +13,6 @@
     "format": "dprint fmt \"**/*.{ts,tsx,js,jsx,json}\"",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
     "start": "cross-env NODE_ENV=production node ./build/server.js",
-    "pgtyped:watch": "pgtyped -c pgtyped.config.json -w",
     "typecheck": "tsc",
     "validate": "run-p \"test -- --run\" lint typecheck",
     "aux:run": "nodemon -w aux aux/app.ts"
@@ -26,7 +25,6 @@
     "/postgres-data"
   ],
   "dependencies": {
-    "@pgtyped/runtime": "^2.1.0",
     "@remix-run/css-bundle": "^1.19.3",
     "@remix-run/express": "^1.19.3",
     "@remix-run/node": "^1.19.3",
@@ -50,7 +48,6 @@
     "express^1.19.3": "link:@remix-run/express^1.19.3",
     "front-matter": "^4.0.2",
     "isbot": "^3.6.10",
-    "knex": "^2.4.2",
     "lodash": "^4.17.21",
     "morgan": "^1.10.0",
     "node^1.19.3": "link:@remix-run/node^1.19.3",
@@ -70,7 +67,6 @@
     "zod": "^3.22.2"
   },
   "devDependencies": {
-    "@pgtyped/cli": "^2.2.1",
     "@remix-run/dev": "^1.19.3",
     "@remix-run/eslint-config": "^1.19.3",
     "@types/bcryptjs": "^2.4.2",
