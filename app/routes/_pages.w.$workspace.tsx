@@ -24,6 +24,9 @@ export default function Workspace() {
         <Link to={`/w/${workspace.name}/gen-image-sd`} className="btn btn-primary btn-sm">
           + Stable Diffusion Image
         </Link>
+        <Link to={`/w/${workspace.name}/new-ollama-chat`} className="btn btn-primary btn-sm">
+          + Ollama Chat
+        </Link>
       </div>
       <Outlet />
     </>
